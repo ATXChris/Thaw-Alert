@@ -1,0 +1,17 @@
+make: xtensa-lx106-elf-gcc: Command not found
+expr: syntax error: unexpected argument ‘5.2.0’
+/bin/sh: 1: xtensa-lx106-elf-gcc: not found
+/bin/sh: 1: xtensa-lx106-elf-gcc: not found
+Toolchain path: 
+WARNING: Failed to find Xtensa toolchain, may need to alter PATH or set one in the configuration menu
+Python requirements from /home/christhompson/esp/ESP8266_RTOS_SDK/requirements.txt are satisfied.
+make[1]: xtensa-lx106-elf-gcc: Command not found
+expr: syntax error: unexpected argument ‘5.2.0’
+/bin/sh: 1: xtensa-lx106-elf-gcc: not found
+/bin/sh: 1: xtensa-lx106-elf-gcc: not found
+WARNING: Failed to find Xtensa toolchain, may need to alter PATH or set one in the configuration menu
+CC build/bootloader/main/bootloader_start.o
+make[2]: xtensa-lx106-elf-gcc: Command not found
+make[2]: *** [/home/christhompson/esp/ESP8266_RTOS_SDK/make/component_wrapper.mk:292: bootloader_start.o] Error 127
+make[1]: *** [/home/christhompson/esp/ESP8266_RTOS_SDK/make/project.mk:571: component-main-build] Error 2
+make: *** [/home/christhompson/esp/ESP8266_RTOS_SDK/components/bootloader/Makefile.projbuild:40: /home/christhompson/esp/ESP8266_RTOS_SDK/examples/get-started/hello_world/build/bootloader/bootloader.bin] Error 2

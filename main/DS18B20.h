@@ -4,7 +4,6 @@
 #include "driver/gpio.h"
 #include <stdbool.h>
 
-void testLinking();
-bool initializeBus(gpio_num_t gpio_num);
+bool DS18B20_InitializeBus(gpio_num_t gpio_num);
 
 #endif

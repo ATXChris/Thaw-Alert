@@ -18,13 +18,16 @@
 static const char *TAG = "Temperature Task";
 
 void temperature_task(void *pvParameters){
-    //GPIO_NUM_4 is d2
-    while(!initializeBus(GPIO_NUM_4)){
-    	ESP_LOGE(TAG, "Sensor failed to intialize");
+
+    //Pin "D2" is GPIO_NUM_4
+    if(initializeBus(GPIO_NUM_4)){
+        ESP_LOGI(TAG, "DS18B20 Initialized Successfully");
+    }else{
+        ESP_LOGE(TAG, "Sensor failed to intialize");
     }
     
     while(1){
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 

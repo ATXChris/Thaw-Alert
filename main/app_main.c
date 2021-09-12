@@ -6,5 +6,4 @@
 void app_main()
 {
     xTaskCreate(temperature_task, "temp_task", 4096, NULL, 1, NULL);
-    
 }

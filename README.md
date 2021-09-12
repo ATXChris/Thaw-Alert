@@ -17,4 +17,9 @@ Install virtualbox USB driver manually.
 	install
 	reboot
 
-when building, update the idf and type
+Use terminal to navigate to Thaw_Alert directory
+
+export PATH="$HOME/esp/xtensa-lx106-elf/bin:$PATH"
+export IDF_PATH=~/esp/ESP8266_RTOS_SDK
+make all
+

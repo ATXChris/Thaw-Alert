@@ -1,6 +1,6 @@
 # Thaw Alert
 
-Set-up ubuntu VM
+Set-up ubuntu VM <br />
 	will need to install gcc perl package on guest additions step
 	https://brb.nci.nih.gov/seqtools/installUbuntu.html
 pull ESP8266_RTOS_SDK

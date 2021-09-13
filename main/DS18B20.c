@@ -60,19 +60,71 @@ bool DS18B20_InitializeBus(gpio_num_t gpio_num){
     
     //Release timer, isr resources
     ESP_ERROR_CHECK(hw_timer_deinit());
+    ESP_ERROR_CHECK(gpio_isr_handler_remove(gpio_num));
     gpio_uninstall_isr_service();
     
     return present; 
 }
 
-void DS18B20_WriteBit(gpio_num_t gpio_num, int bit){
+void DS18B20_WriteBit(gpio_num_t gpio_num, bool bit){
     timeout = false;
-    int writeValue = (bit == 0) ? 0 : 1;
+    //int writeValue = bit ? 0 : 1;
+    ESP_LOGI(TAG, "Writing bit %d", bit);
     ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_OUTPUT));
     ESP_ERROR_CHECK(gpio_set_level(gpio_num, 0));
-    ESP_ERROR_CHECK(gpio_set_level(gpio_num, writeValue));
     ESP_ERROR_CHECK(hw_timer_init(hw_timer_callback, NULL));
+    ESP_ERROR_CHECK(hw_timer_alarm_us(11, false));
+    while(!timeout){}; //busy wait
+    timeout = false;
+    ESP_ERROR_CHECK(gpio_set_level(gpio_num, bit));
     ESP_ERROR_CHECK(hw_timer_alarm_us(60, false));
     while(!timeout){}; //busy wait
+    
+    //Release Bus
+    ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_INPUT));
+    ESP_ERROR_CHECK(hw_timer_deinit());
+}
+
+void DS18B20_WriteByte(gpio_num_t gpio_num, uint8_t byte){
+    ESP_LOGI(TAG, "Writing byte 0x%x", byte);
+    for(int i = 0; i < 8; i++){
+        DS18B20_WriteBit(gpio_num, (byte & 1<<i) > 0);
+    }
+}
+
+uint8_t DS18B20_ReadBit(gpio_num_t gpio_num){
+    timeout = false;
+    
+    ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_OUTPUT));
+    ESP_ERROR_CHECK(gpio_set_level(gpio_num, 0));
+    ESP_ERROR_CHECK(hw_timer_init(hw_timer_callback, NULL));
+    ESP_ERROR_CHECK(hw_timer_alarm_us(11, false));
+    while(!timeout){}; //busy wait
+    timeout = false;
+    present = false;
+    ESP_ERROR_CHECK(gpio_set_intr_type(gpio_num, GPIO_INTR_NEGEDGE));
+    ESP_ERROR_CHECK(gpio_install_isr_service(0));
+    ESP_LOGI(TAG, "Interrupt fired %d", present);
+    ESP_ERROR_CHECK(gpio_isr_handler_add(gpio_num, gpio_isr_handler, (void *)gpio_num));
+    ESP_LOGI(TAG, "Interrupt fired %d", present);
+    ESP_ERROR_CHECK(gpio_set_level(gpio_num, 1));
+    ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_INPUT));
+    ESP_ERROR_CHECK(hw_timer_alarm_us(60, false));
+    while(!timeout){}; //busy wait
+    ESP_ERROR_CHECK(hw_timer_deinit());
+    ESP_ERROR_CHECK(gpio_isr_handler_remove(gpio_num));
+    gpio_uninstall_isr_service();
+    ESP_LOGI(TAG, "Reading bit %d", !present);
+    return (uint8_t)(!present);
+
+}
+
+uint8_t DS18B20_ReadByte(gpio_num_t gpio_num){
+    uint8_t response = 0;
+    for(int i = 0; i < 8; i++){
+        response = response | (DS18B20_ReadBit(gpio_num)<<i);
+    }
+    ESP_LOGI(TAG, "Read byte 0x%2x", response);
+    return response;
 }
 

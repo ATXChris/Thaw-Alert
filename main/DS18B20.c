@@ -72,14 +72,9 @@ bool DS18B20_InitializeBus(gpio_num_t gpio_num){
 
 void DS18B20_WriteBit(gpio_num_t gpio_num, bool bit){
     timeout = false;
-    //int writeValue = bit ? 0 : 1;
-    //ESP_LOGI(TAG, "Writing bit %d", bit);
     ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_OUTPUT));
     ESP_ERROR_CHECK(gpio_set_level(gpio_num, 0));
     ESP_ERROR_CHECK(hw_timer_init(hw_timer_callback, NULL));
-    //ESP_ERROR_CHECK(hw_timer_alarm_us(11, false));
-    //while(!timeout){}; //busy wait
-    //timeout = false;
     ESP_ERROR_CHECK(gpio_set_level(gpio_num, bit));
     if(bit){
         ESP_ERROR_CHECK(gpio_set_direction(gpio_num, 1));
@@ -96,7 +91,7 @@ void DS18B20_WriteBit(gpio_num_t gpio_num, bool bit){
 }
 
 void DS18B20_WriteByte(gpio_num_t gpio_num, uint8_t byte){
-    //ESP_LOGI(TAG, "Writing byte 0x%x", byte);
+    ESP_LOGI(TAG, "Writing byte 0x%x", byte);
     for(int i = 0; i < 8; i++){
         DS18B20_WriteBit(gpio_num, (byte & 1<<i) > 0);
     }
@@ -108,8 +103,6 @@ uint8_t DS18B20_ReadBit(gpio_num_t gpio_num){
     ESP_ERROR_CHECK(gpio_set_direction(gpio_num, GPIO_MODE_OUTPUT));
     ESP_ERROR_CHECK(gpio_set_level(gpio_num, 0));
     ESP_ERROR_CHECK(hw_timer_init(hw_timer_callback, NULL));
-    //ESP_ERROR_CHECK(hw_timer_alarm_us(11, false));
-    //while(!timeout){}; //busy wait
     ESP_ERROR_CHECK(gpio_set_intr_type(gpio_num, GPIO_INTR_NEGEDGE));
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
     ESP_ERROR_CHECK(gpio_isr_handler_add(gpio_num, gpio_isr_handler, (void *)gpio_num));
@@ -133,7 +126,7 @@ uint8_t DS18B20_ReadByte(gpio_num_t gpio_num){
     for(int i = 0; i < 8; i++){
         response = response | (DS18B20_ReadBit(gpio_num)<<i);
     }
-    ESP_LOGI(TAG, "Read byte 0x%2x", response);
+    //ESP_LOGI(TAG, "Read byte 0x%2x", response);
     return response;
 }
 
